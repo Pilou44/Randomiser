@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        File root = new File(Environment.getExternalStorageDirectory() + "/Music");
+        File root = new File(Environment.getExternalStorageDirectory() + "/Musique");
         RandomiseThread randomiser = new RandomiseThread(root);
         randomiser.start();
     }
