@@ -1,5 +1,7 @@
 package com.freak.asteroid.randomiser;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.util.Vector;
 
 public class RandomiseThread extends Thread {
 
+    private static final String TAG = "RandomiseThread";
+    private static final boolean DEBUG = true;
     private final File mStartFolder;
 
     public RandomiseThread(File startFolder) {
@@ -24,6 +28,9 @@ public class RandomiseThread extends Thread {
     }
 
     private Vector<File> parse(File folder) {
+        if (DEBUG)
+            Log.d(TAG, "Parse " + folder.getName());
+
         Vector<File> files = new Vector<>();
         File[] filesTab = folder.listFiles();
 
@@ -31,12 +38,30 @@ public class RandomiseThread extends Thread {
             if (aFilesTab.getName().endsWith("mp3")) {
                 files.add(aFilesTab);
             } else if (aFilesTab.isDirectory()) {
+
+                if (DEBUG)
+                    Log.d(TAG, "Found directory " + aFilesTab.getName());
+
+                Vector<File> subFiles = parse(aFilesTab);
+
+                if (DEBUG) {
+                    Log.d(TAG, aFilesTab.getName() + " contains " + subFiles.size() + " files");
+                    Log.d(TAG, "Vector size was " + files.size());
+                }
+
                 files.addAll(parse(aFilesTab));
+
+                if (DEBUG)
+                    Log.d(TAG, "Vector size is now " + files.size());
             }
         }
         
         File playlist = new File(mStartFolder, folder.getName() + ".m3u");
         randomiseAndWrite(files, playlist);
+
+
+        if (DEBUG)
+            Log.d(TAG, "Done parsing " + folder.getName());
 
         return files;
     }
@@ -46,13 +71,19 @@ public class RandomiseThread extends Thread {
         Random random = new Random();
         int index;
 
-        for (int i = 0 ; i < files.size() ; i++) {
+        for (int i = 0 ; i < filesNames.length ; i++) {
             if (files.size() > 1) {
                 index = random.nextInt() % files.size();
+                if (index < 0)
+                    index *= -1;
             }
             else {
                 index = 0;
             }
+
+            if (DEBUG)
+                Log.d(TAG, "i=" + i + ", size=" + files.size() + ", index=" + index);
+
             filesNames[i] = files.get(index).getAbsolutePath();
             files.remove(index);
         }
