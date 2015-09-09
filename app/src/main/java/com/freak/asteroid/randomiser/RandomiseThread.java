@@ -15,6 +15,7 @@ public class RandomiseThread extends Thread {
     private static final String TAG = "RandomiseThread";
     private static final boolean DEBUG = true;
     private final File mStartFolder;
+    private RandomThreadListener listener;
 
     public RandomiseThread(File startFolder) {
         mStartFolder = startFolder;
@@ -23,8 +24,21 @@ public class RandomiseThread extends Thread {
     @Override
     public void run() {
         if (mStartFolder != null && mStartFolder.isDirectory()) {
+            if (listener != null) {
+                listener.notifyStartOfParsing();
+            }
             parse(mStartFolder);
+            if (listener != null) {
+                listener.notifyEndOfParsing();
+            }
         }
+        else if (listener != null) {
+            listener.notifyRootError();
+        }
+    }
+
+    public void setListener(RandomThreadListener listener) {
+        this.listener = listener;
     }
 
     private Vector<File> parse(File folder) {
