@@ -12,9 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 
 public class MainActivity extends Activity implements View.OnClickListener, RandomThreadListener {
+
+    private static final int MESSAGE_ERROR = 0;
+    private static final int MESSAGE_RUNNING = 1;
+    private static final int MESSAGE_FINISHED = 2;
 
     private File root;
     private TextView randomText;
@@ -33,14 +36,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
         randomText = (TextView) findViewById(R.id.random_text);
 
         handler = new Handler(new IncomingHandlerCallback());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        /*File root = new File(Environment.getExternalStorageDirectory() + "/Musique");
-        RandomiseThread randomiser = new RandomiseThread(root);
-        randomiser.start();*/
     }
 
     @Override
@@ -76,17 +71,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
 
     @Override
     public void notifyEndOfParsing() {
-        handler.sendEmptyMessage(1);
+        handler.sendEmptyMessage(MESSAGE_FINISHED);
     }
 
     @Override
     public void notifyRootError() {
-        handler.sendEmptyMessage(0);
+        handler.sendEmptyMessage(MESSAGE_ERROR);
     }
 
     @Override
     public void notifyStartOfParsing() {
-        handler.sendEmptyMessage(2);
+        handler.sendEmptyMessage(MESSAGE_RUNNING);
     }
 
     class IncomingHandlerCallback implements Handler.Callback {
@@ -94,43 +89,19 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
         @Override
         public boolean handleMessage(Message msg) {
 
-            if (msg.what == 0) {
-                updateText("Error with Root");
+            if (msg.what == MESSAGE_ERROR) {
+                updateText(getString(R.string.thread_error));
             }
-            else if (msg.what == 1) {
-                updateText("Done");
+            else if (msg.what == MESSAGE_FINISHED) {
+                updateText(getString(R.string.thread_finished));
             }
-            else if (msg.what == 2) {
-                updateText("Start");
+            else if (msg.what == MESSAGE_RUNNING) {
+                updateText(getString(R.string.thread_running));
             }
 
             return true;
         }
     }
-
-    /*static class ThreadHandler extends Handler {
-        private final WeakReference<MainActivity> mActivity;
-
-        ThreadHandler(MainActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-        @Override
-        public void handleMessage(Message msg)
-        {
-            MainActivity activity = mActivity.get();
-            if (activity != null) {
-               if (msg.what == 0) {
-                   activity.updateText("Error with Root");
-               }
-               else if (msg.what == 1) {
-                   activity.updateText("Done");
-               }
-               else if (msg.what == 2) {
-                   activity.updateText("Start");
-               }
-            }
-        }
-    }*/
 
     private void updateText(String text) {
         randomText.setText(text);
