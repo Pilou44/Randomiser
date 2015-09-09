@@ -49,19 +49,19 @@ public class RandomiseThread extends Thread {
                     Log.d(TAG, "Vector size was " + files.size());
                 }
 
-                files.addAll(parse(aFilesTab));
+                files.addAll(subFiles);
 
                 if (DEBUG)
                     Log.d(TAG, "Vector size is now " + files.size());
             }
         }
         
-        File playlist = new File(mStartFolder, folder.getName() + ".m3u");
-        randomiseAndWrite(files, playlist);
+        File playlist = new File(mStartFolder, folder.getName() + " Random.m3u");
+        randomiseAndWrite((Vector<File>) files.clone(), playlist);
 
 
         if (DEBUG)
-            Log.d(TAG, "Done parsing " + folder.getName());
+            Log.d(TAG, "Done parsing " + folder.getName() + " with size " + files.size());
 
         return files;
     }
