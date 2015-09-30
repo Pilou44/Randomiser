@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.File;
@@ -30,8 +31,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
 
         root = new File(Environment.getExternalStorageDirectory() + "/Musique");
 
-        Button randomButton = (Button) findViewById(R.id.random_button);
+        ImageButton randomButton = (ImageButton) findViewById(R.id.random_button);
         randomButton.setOnClickListener(this);
+
+        ImageButton linearButton = (ImageButton) findViewById(R.id.linear_button);
+        linearButton.setOnClickListener(this);
 
         randomText = (TextView) findViewById(R.id.random_text);
 
@@ -62,8 +66,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
 
     @Override
     public void onClick(View view) {
+        RandomiseThread randomiser;
         if (view.getId() == R.id.random_button) {
-            RandomiseThread randomiser = new RandomiseThread(root);
+            randomiser = new RandomiseThread(root, true, " Random");
+            randomiser.setListener(this);
+            randomiser.start();
+        }
+        else if (view.getId() == R.id.linear_button) {
+            randomiser = new RandomiseThread(root, false, "");
             randomiser.setListener(this);
             randomiser.start();
         }

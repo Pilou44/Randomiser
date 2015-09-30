@@ -15,10 +15,14 @@ public class RandomiseThread extends Thread {
     private static final String TAG = "RandomiseThread";
     private static final boolean DEBUG = true;
     private final File mStartFolder;
+    private final boolean mRandom;
+    private final String mSuffix;
     private RandomThreadListener listener;
 
-    public RandomiseThread(File startFolder) {
+    public RandomiseThread(File startFolder, boolean random, String suffix) {
         mStartFolder = startFolder;
+        mRandom = random;
+        mSuffix = suffix;
     }
 
     @Override
@@ -47,6 +51,7 @@ public class RandomiseThread extends Thread {
 
         Vector<File> files = new Vector<>();
         File[] filesTab = folder.listFiles();
+        sortFiles(filesTab);
 
         for (File aFilesTab : filesTab) {
             if (aFilesTab.getName().endsWith("mp3")) {
@@ -70,7 +75,7 @@ public class RandomiseThread extends Thread {
             }
         }
         
-        File playlist = new File(mStartFolder, folder.getName() + " Random.m3u");
+        File playlist = new File(mStartFolder, folder.getName() + mSuffix + ".m3u");
         randomiseAndWrite((Vector<File>) files.clone(), playlist);
 
 
@@ -80,16 +85,40 @@ public class RandomiseThread extends Thread {
         return files;
     }
 
+    private static void sortFiles(File[] tableau) {
+        int longueur = tableau.length;
+        File tampon;
+        boolean permut;
+
+        do {
+            // hypothèse : le tableau est trié
+            permut = false;
+            for (int i = 0; i < longueur - 1; i++) {
+                // Teste si 2 éléments successifs sont dans le bon ordre ou non
+                if (tableau[i].getName().compareToIgnoreCase(tableau[i + 1].getName()) > 0) {
+                    // s'ils ne le sont pas, on échange leurs positions
+                    tampon = tableau[i];
+                    tableau[i] = tableau[i + 1];
+                    tableau[i + 1] = tampon;
+                    permut = true;
+                }
+            }
+        } while (permut);
+    }
     private void randomiseAndWrite(Vector<File> files, File playlist) {
         String[] filesNames = new String[files.size()];
         Random random = new Random();
         int index;
 
-        for (int i = 0 ; i < filesNames.length ; i++) {
-            if (files.size() > 1) {
-                index = random.nextInt() % files.size();
-                if (index < 0)
-                    index *= -1;
+        for (int i = 0; i < filesNames.length; i++) {
+            if (mRandom) {
+                if (files.size() > 1) {
+                    index = random.nextInt() % files.size();
+                    if (index < 0)
+                        index *= -1;
+                } else {
+                    index = 0;
+                }
             }
             else {
                 index = 0;
