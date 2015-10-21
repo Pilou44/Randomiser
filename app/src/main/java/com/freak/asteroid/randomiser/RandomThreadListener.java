@@ -7,4 +7,8 @@ public interface RandomThreadListener {
     void notifyRootError();
 
     void notifyStartOfParsing();
+
+    void notifyTestExistingFiles();
+
+    void notifyDeletingExistingFiles();
 }

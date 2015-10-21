@@ -8,7 +8,6 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -19,6 +18,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
     private static final int MESSAGE_ERROR = 0;
     private static final int MESSAGE_RUNNING = 1;
     private static final int MESSAGE_FINISHED = 2;
+    private static final int MESSAGE_TESTING = 3;
+    private static final int MESSAGE_DELETING = 4;
 
     private File root;
     private TextView randomText;
@@ -67,13 +68,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
     @Override
     public void onClick(View view) {
         RandomiseThread randomiser;
+        File dest = new File(Environment.getExternalStorageDirectory() + "/Playlists");
+        if (!dest.exists())
+            dest.mkdir();
         if (view.getId() == R.id.random_button) {
-            randomiser = new RandomiseThread(root, true, " Random");
+            randomiser = new RandomiseThread(root, true, "_Random", dest);
             randomiser.setListener(this);
             randomiser.start();
         }
         else if (view.getId() == R.id.linear_button) {
-            randomiser = new RandomiseThread(root, false, "");
+            randomiser = new RandomiseThread(root, false, "", dest);
             randomiser.setListener(this);
             randomiser.start();
         }
@@ -94,6 +98,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
         handler.sendEmptyMessage(MESSAGE_RUNNING);
     }
 
+    @Override
+    public void notifyTestExistingFiles() {
+        handler.sendEmptyMessage(MESSAGE_TESTING);
+    }
+
+    @Override
+    public void notifyDeletingExistingFiles() {
+        handler.sendEmptyMessage(MESSAGE_DELETING);
+    }
+
     class IncomingHandlerCallback implements Handler.Callback {
 
         @Override
@@ -107,6 +121,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
             }
             else if (msg.what == MESSAGE_RUNNING) {
                 updateText(getString(R.string.thread_running));
+            }
+            else if (msg.what == MESSAGE_TESTING) {
+                updateText(getString(R.string.thread_testing));
+            }
+            else if (msg.what == MESSAGE_DELETING) {
+                updateText(getString(R.string.thread_deleting));
             }
 
             return true;

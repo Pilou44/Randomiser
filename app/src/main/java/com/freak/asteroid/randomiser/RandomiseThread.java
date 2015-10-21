@@ -3,6 +3,7 @@ package com.freak.asteroid.randomiser;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,20 +15,30 @@ public class RandomiseThread extends Thread {
 
     private static final String TAG = "RandomiseThread";
     private static final boolean DEBUG = true;
-    private final File mStartFolder;
+    private final File mStartFolder, mDestFolder;
     private final boolean mRandom;
     private final String mSuffix;
     private RandomThreadListener listener;
+    private char mCurrentChar, mNewChar;
 
-    public RandomiseThread(File startFolder, boolean random, String suffix) {
+    public RandomiseThread(File startFolder, boolean random, String suffix, File destinationFolder) {
         mStartFolder = startFolder;
+        mDestFolder = destinationFolder;
         mRandom = random;
         mSuffix = suffix;
     }
 
     @Override
     public void run() {
-        if (mStartFolder != null && mStartFolder.isDirectory()) {
+        if (mStartFolder != null && mStartFolder.isDirectory() && mDestFolder != null && mDestFolder.isDirectory()) {
+            if (listener != null) {
+                listener.notifyTestExistingFiles();
+            }
+            testFiles();
+            if (listener != null) {
+                listener.notifyDeletingExistingFiles();
+            }
+            deleteAllFiles();
             if (listener != null) {
                 listener.notifyStartOfParsing();
             }
@@ -38,6 +49,55 @@ public class RandomiseThread extends Thread {
         }
         else if (listener != null) {
             listener.notifyRootError();
+        }
+    }
+
+    private void deleteAllFiles() {
+        File[] files = mDestFolder.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.getName().endsWith(mCurrentChar + mSuffix + mCurrentChar + ".m3u"))
+                    return true;
+                else
+                    return false;
+            }
+        });
+        for (int i = 0; i < files.length ; i++){
+            files[i].delete();
+        }
+    }
+
+    private void testFiles() {
+        File[] files1 = mDestFolder.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.getName().endsWith("_" + mSuffix + "_.m3u"))
+                    return true;
+                else
+                    return false;
+            }
+        });
+        File[] files2 = mDestFolder.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.getName().endsWith("!" + mSuffix + "!.m3u"))
+                    return true;
+                else
+                    return false;
+            }
+        });
+        
+        if (files1.length == 0 && files2.length > 0) {
+            mCurrentChar = '!';
+            mNewChar = '_';
+        }
+        else if (files1.length > 0 && files2.length == 0) {
+            mCurrentChar = '_';
+            mNewChar = '!';
+        }
+        else {
+            mCurrentChar = '_';
+            mNewChar = '_';
         }
     }
 
@@ -56,7 +116,8 @@ public class RandomiseThread extends Thread {
         for (File aFilesTab : filesTab) {
             if (aFilesTab.getName().endsWith("mp3")) {
                 files.add(aFilesTab);
-            } else if (aFilesTab.isDirectory()) {
+            }
+            else if (aFilesTab.isDirectory()) {
 
                 if (DEBUG)
                     Log.d(TAG, "Found directory " + aFilesTab.getName());
@@ -74,10 +135,9 @@ public class RandomiseThread extends Thread {
                     Log.d(TAG, "Vector size is now " + files.size());
             }
         }
-        
-        File playlist = new File(mStartFolder, folder.getName() + mSuffix + ".m3u");
-        randomiseAndWrite((Vector<File>) files.clone(), playlist);
 
+        File playlist = new File(mDestFolder, folder.getName() + mNewChar + mSuffix + mNewChar + ".m3u");
+        randomiseAndWrite((Vector<File>) files.clone(), playlist);
 
         if (DEBUG)
             Log.d(TAG, "Done parsing " + folder.getName() + " with size " + files.size());

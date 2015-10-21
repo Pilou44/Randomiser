@@ -3,6 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="thread_waiting">Pause</string>
     <string name="thread_running">Running...</string>
+    <string name="thread_testing">Testing existing files...</string>
+    <string name="thread_deleting">Deleting existing files...</string>
     <string name="thread_finished">Done</string>
     <string name="thread_error">Error</string>
 </resources>
