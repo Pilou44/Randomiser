@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:title="@string/settings_name">
+
+    <CheckBoxPreference
+        android:key="@string/key_random_on_boot"
+        android:title="@string/random_on_boot" />
+    <CheckBoxPreference
+        android:key="@string/key_alpha_on_boot"
+        android:title="@string/alpha_on_boot" />
+
+</PreferenceScreen>

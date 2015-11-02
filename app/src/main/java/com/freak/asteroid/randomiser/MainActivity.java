@@ -1,6 +1,7 @@
 package com.freak.asteroid.randomiser;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Environment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +22,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
     private static final int MESSAGE_TESTING = 3;
     private static final int MESSAGE_DELETING = 4;
 
-    private File root;
     private TextView randomText;
     private Handler handler;
 
@@ -29,8 +29,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        root = new File(Environment.getExternalStorageDirectory() + "/Musique");
 
         ImageButton randomButton = (ImageButton) findViewById(R.id.random_button);
         randomButton.setOnClickListener(this);
@@ -52,23 +50,21 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, Settings.class);
+                startActivity(intent);
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
     public void onClick(View view) {
         RandomiseThread randomiser;
         File dest = new File(Environment.getExternalStorageDirectory() + "/Playlists");
+        File root = new File(Environment.getExternalStorageDirectory() + "/Musique");
+
         if (!dest.exists())
             dest.mkdir();
         if (view.getId() == R.id.random_button) {

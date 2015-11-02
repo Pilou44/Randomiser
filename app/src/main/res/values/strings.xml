@@ -1,10 +1,17 @@
 <resources>
+    <string name="key_random_on_boot" translateble="false">key_random_on_boot</string>
+    <string name="key_alpha_on_boot" translateble="false">key_alpha_on_boot</string>
+    <string name="key_preferences" translateble="false">com.freak.randomiser_preferences</string>
+
     <string name="app_name">Randomiser</string>
-    <string name="action_settings">Settings</string>
+    <string name="settings_name">Settings</string>
     <string name="thread_waiting">Pause</string>
     <string name="thread_running">Running...</string>
     <string name="thread_testing">Testing existing files...</string>
     <string name="thread_deleting">Deleting existing files...</string>
     <string name="thread_finished">Done</string>
     <string name="thread_error">Error</string>
+    <string name="random_on_boot">Generate random playlists on boot</string>
+    <string name="alpha_on_boot">Generate alphabetic playlists on boot</string>
+
 </resources>

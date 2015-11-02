@@ -14,7 +14,7 @@ import java.util.Vector;
 public class RandomiseThread extends Thread {
 
     private static final String TAG = "RandomiseThread";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private final File mStartFolder, mDestFolder;
     private final boolean mRandom;
     private final String mSuffix;
