@@ -26,7 +26,7 @@ public class RandomService extends Service {
         File dest = new File(Environment.getExternalStorageDirectory() + "/Playlists");
         if (!dest.exists())
             dest.mkdir();
-        randomiser = new RandomiseThread(root, true, "_Random", dest);
+        randomiser = new RandomiseThread(this, root, true, "_Random", dest);
         randomiser.start();
     }
 }

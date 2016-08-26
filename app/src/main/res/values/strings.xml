@@ -13,5 +13,6 @@
     <string name="thread_error">Error</string>
     <string name="random_on_boot">Generate random playlists on boot</string>
     <string name="alpha_on_boot">Generate alphabetic playlists on boot</string>
+    <string name="generating">Generating playlists</string>
 
 </resources>

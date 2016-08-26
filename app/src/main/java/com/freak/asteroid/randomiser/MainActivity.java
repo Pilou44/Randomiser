@@ -68,12 +68,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Rand
         if (!dest.exists())
             dest.mkdir();
         if (view.getId() == R.id.random_button) {
-            randomiser = new RandomiseThread(root, true, "_Random", dest);
+            randomiser = new RandomiseThread(this, root, true, "_Random", dest);
             randomiser.setListener(this);
             randomiser.start();
         }
         else if (view.getId() == R.id.linear_button) {
-            randomiser = new RandomiseThread(root, false, "", dest);
+            randomiser = new RandomiseThread(this, root, false, "", dest);
             randomiser.setListener(this);
             randomiser.start();
         }

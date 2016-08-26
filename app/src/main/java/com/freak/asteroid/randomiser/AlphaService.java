@@ -26,7 +26,7 @@ public class AlphaService extends Service {
         File dest = new File(Environment.getExternalStorageDirectory() + "/Playlists");
         if (!dest.exists())
             dest.mkdir();
-        randomiser = new RandomiseThread(root, false, "", dest);
+        randomiser = new RandomiseThread(this, root, false, "", dest);
         randomiser.start();
     }
 }

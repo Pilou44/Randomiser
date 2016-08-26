@@ -1,5 +1,8 @@
 package com.freak.asteroid.randomiser;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -18,10 +21,12 @@ public class RandomiseThread extends Thread {
     private final File mStartFolder, mDestFolder;
     private final boolean mRandom;
     private final String mSuffix;
+    private final Context mContext;
     private RandomThreadListener listener;
     private char mCurrentChar, mNewChar;
 
-    public RandomiseThread(File startFolder, boolean random, String suffix, File destinationFolder) {
+    public RandomiseThread(Context context, File startFolder, boolean random, String suffix, File destinationFolder) {
+        mContext = context;
         mStartFolder = startFolder;
         mDestFolder = destinationFolder;
         mRandom = random;
@@ -30,6 +35,20 @@ public class RandomiseThread extends Thread {
 
     @Override
     public void run() {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.drawable.random)
+                        .setContentTitle(mContext.getString(R.string.app_name))
+                        .setContentText(mContext.getString(R.string.generating));
+        NotificationManager mNotificationManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        int mId = 0;
+        if (mRandom) {
+            mId++;
+        }
+        mNotificationManager.notify(mId, mBuilder.build());
+
         if (mStartFolder != null && mStartFolder.isDirectory() && mDestFolder != null && mDestFolder.isDirectory()) {
             if (listener != null) {
                 listener.notifyTestExistingFiles();
@@ -50,6 +69,8 @@ public class RandomiseThread extends Thread {
         else if (listener != null) {
             listener.notifyRootError();
         }
+
+        mNotificationManager.cancel(mId);
     }
 
     private void deleteAllFiles() {
