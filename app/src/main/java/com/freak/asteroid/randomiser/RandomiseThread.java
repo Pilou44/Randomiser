@@ -222,7 +222,7 @@ public class RandomiseThread extends Thread {
 
         PrintWriter writer;
         try {
-            writer = new PrintWriter(playlist, "UTF-8");
+            writer = new PrintWriter(playlist, "ISO-8859-1");
             for (String filesName : filesNames) {
                 writer.println(filesName);
             }
