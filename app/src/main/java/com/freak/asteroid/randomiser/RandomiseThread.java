@@ -1,7 +1,9 @@
 package com.freak.asteroid.randomiser;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -39,7 +41,9 @@ public class RandomiseThread extends Thread {
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.random)
                         .setContentTitle(mContext.getString(R.string.app_name))
-                        .setContentText(mContext.getString(R.string.generating));
+                        .setContentText(mContext.getString(R.string.generating))
+                        .setContentIntent(PendingIntent.getActivity(
+                                mContext.getApplicationContext(), 0, new Intent(), 0));
         NotificationManager mNotificationManager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
