@@ -8,7 +8,7 @@ android {
         applicationId "com.freak.asteroid.randomiser"
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 29
+        versionCode 31
         versionName "2.2"
     }
     buildTypes {
